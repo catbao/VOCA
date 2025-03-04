@@ -42,8 +42,10 @@ We provide an example dataset, nycdata, that reflects the taxi activity in New Y
 1、 Install PostgreSQL: If PostgreSQL is not already installed, download and install it from the [official website](https://www.postgresql.org/download/). We recommend using version 14.
 
 2、 Import the Dataset: Use a graphical database tool such as Navicat or DBeaver to import the dataset into your local PostgreSQL database(Take Navicat for example):
+
 (1) Create a postgres connection and database.
 ![Create connection](image-1.png)
+
 (2) Import the CSV file into the public directory.
 ![Import csv file](image-2.png)
 
