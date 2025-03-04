@@ -9,7 +9,7 @@
     <div class="choose_container choose_mode_container ms-1">
       <el-radio-group v-model="chooseMode" size="medium" @change="handleModeChange">
         <el-radio-button label="Default"></el-radio-button>
-        <el-radio-button label="Custom"></el-radio-button>
+        <!-- <el-radio-button label="Custom"></el-radio-button> -->
       </el-radio-group>
     </div>
 
