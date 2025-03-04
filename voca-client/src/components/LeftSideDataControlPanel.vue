@@ -174,7 +174,8 @@
 
     <div class="mt-2 mb-1">
       <el-select v-model="selectedExperiment" placeholder="Experiment" @change="handleSelectedExperiment" @focus="onFocusExperiment">
-        <el-option v-for="(item, idx) in multiLineClassAndLinesMap.get('experiments')" :key="idx" :label="item" :value="item">
+        <!-- <el-option v-for="(item, idx) in multiLineClassAndLinesMap.get('experiments')" :key="idx" :label="item" :value="item"> -->
+        <el-option v-for="(item, idx) in ['ours']" :key="idx" :label="item" :value="item"> 
         </el-option>
       </el-select>
     </div>

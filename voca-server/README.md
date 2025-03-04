@@ -1,4 +1,4 @@
-# VOCA Setup
+# VOCA-Server Setup
 
 <!-- ## Run with Docker
 https://docs.google.com/document/d/17YTot0R3aGX7sqO5I_8jTBWlBwlVFlCuSLeH9rYK01w/edit?usp=sharing
@@ -13,7 +13,17 @@ tips：Before you use OM3, please make sure the data has been imported into the 
 <!-- ```
 ## Run run directly -->
 
+
+1、Configure your db information in the initdb/dbconfig.json file：
+   ```
+   For example:
+   "hostname":"127.0.0.1",
+   "db":"postgres1",         //update to your dbname
+   "username":"postgres",    //update to your username
+   "password":"******",      //update to your password
 ```
-1、Configure your db information in the initdb/dbconfig.json file
 2、npm run start
+
+```
+tips：Before you use VOCA, please make sure the data has been imported into the database and you have encoded the data.
 ```

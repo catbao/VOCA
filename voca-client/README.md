@@ -1,4 +1,4 @@
-# VOCA Client
+# VOCA-Client Client
 
 ## Project setup
 ```
