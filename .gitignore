@@ -2,4 +2,3 @@
 /node_modules
 /package-lock.json
 /voca-server/flags
-/voca-server/initdb/nycdata.csv

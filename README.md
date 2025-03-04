@@ -1,16 +1,5 @@
 # VOCA System
 
-## Project Setup
-You can run voca-client and voca-server on your computer at the same time. 
-
-
-### VOCA Client
-```
-1. cd voca-client
-2. npm install
-3. npm run serve
-```
-
 ### VOCA Server
 ```
 1. cd voca-server
