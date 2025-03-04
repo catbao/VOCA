@@ -1,5 +1,16 @@
 # VOCA System
 
+## Project Setup
+You can run voca-client and voca-server on your computer at the same time. 
+
+
+### VOCA Client
+```
+1. cd voca-client
+2. npm install
+3. npm run serve
+```
+
 ### VOCA Server
 ```
 1. cd voca-server
@@ -16,7 +27,7 @@ postgres: 14.12
 ```
 
 ### Database
-We backed up a database, we named it nycdata, you can import it in your computer's database. You can find it in '/voca-server/initdb' directory. We use postgresql database, we also recommend you to use it.
+We backed up a database, we named it nycdata, you can import it in your computer's database. You can find it in https://drive.google.com/file/d/1Ab4erGlKN9NFXj8WhFHGy6XoaTH4kNKu/view?usp=sharing. We use postgresql database, we also recommend you to use it.
 
 Then, you can enter the '/voca-server/initdb' directory, and run the encode_bigarray_ave file. You can see that there are 3 files in your database at this time, namely nycdata, nycdata_om3, tablenum.
 
