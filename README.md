@@ -20,9 +20,12 @@ You can run voca-client and voca-server on your computer at the same time.
 ```
 
 ### Run VOCA
-```
-After starting the client and server, you can visit http://localhost:8081 in the browser.
-```
+
+After starting the client and server, you can visit http://localhost:8081 in the browser. 
+
+You can visit this [Google doc](https://docs.google.com/document/d/1m2XpsjZgl6FHwlQK4e0V0yEHNjHLk6hpAQYcat0Fq-k/edit?usp=sharing) to view instructions for using the system.
+
+
 
 ### Enviroment
 ```
