@@ -19,7 +19,7 @@ You can run voca-client and voca-server on your computer at the same time.
 4. npm run start
 ```
 
-### Run
+### Run VOCA
 ```
 After starting the client and server, you can visit http://localhost:8081 in the browser.
 ```
