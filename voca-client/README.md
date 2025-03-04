@@ -1,4 +1,4 @@
-# responsive_linechart_web
+# VOCA Client
 
 ## Project setup
 ```

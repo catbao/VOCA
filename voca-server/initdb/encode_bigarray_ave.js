@@ -18,8 +18,9 @@ const fs = require("fs");
 const { Pool, types } = require('pg');
 // 将NUMERIC类型的数据自动转换为浮点数
 types.setTypeParser(1700, (val) => parseFloat(val));
-
-const dbConfig = JSON.parse(fs.readFileSync("/Users/bao/Desktop/om3-extend/om3-server/initdb/dbconfig.json").toString());
+console.log("Current directory:", process.cwd());
+console.log("Files in directory:", fs.readdirSync('.'));
+const dbConfig = JSON.parse(fs.readFileSync("./dbconfig.json").toString());
 console.log(dbConfig)
 if (!dbConfig['username'] || !dbConfig['hostname'] || !dbConfig['password'] || !dbConfig['db']) {
     throw new Error("db config error");
@@ -27,7 +28,7 @@ if (!dbConfig['username'] || !dbConfig['hostname'] || !dbConfig['password'] || !
 
 const CHUNK_SIZE = 100000000; // 每块1亿条记录
 
-const tableName = process.argv[2];  // 只需要传入表名
+const tableName = 'nycdata';  // 只需要传入表名
 const tv_tableName = tableName
 const OM3_tableName = tableName + '_om3'
 const flagName = OM3_tableName + '.flagz'

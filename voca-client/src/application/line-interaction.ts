@@ -162,37 +162,31 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         
         canvas.width = lineChartObj.width;
         // yScale = d3.scaleLinear().domain([lineChartObj.data.minv, lineChartObj.data.maxv]).range([lineChartObj.height, 0]);
-        // if(minmax != null){
-        //     yScale = d3.scaleLinear().domain([minmax[0], minmax[1]]).range([lineChartObj.height, 0]);
+        if(minmax != null){
+            yScale = d3.scaleLinear().domain([minmax[0], minmax[1]]).range([lineChartObj.height, 0]);
+        }
+        else{
+            yScale = d3.scaleLinear().domain([lineChartObj.minV, lineChartObj.maxV]).range([lineChartObj.height, 0]);
+            // yScale = d3.scaleLinear().domain([-20, 20]).range([lineChartObj.height, 0]);
+        }
+        // if(store.state.controlParams.aggregate == ''){
+        //     yScale = d3.scaleLinear().domain([-60, 60]).range([lineChartObj.height, 0]);
         // }
-        // else{
-            // yScale = d3.scaleLinear().domain([lineChartObj.minV, lineChartObj.maxV]).range([lineChartObj.height, 0]);
-        //     // yScale = d3.scaleLinear().domain([-20, 20]).range([lineChartObj.height, 0]);
+        // else if(store.state.controlParams.aggregate == 'hours'){
+        //     yScale = d3.scaleLinear().domain([-1400, 1800]).range([lineChartObj.height, 0]);
         // }
-        if(store.state.controlParams.aggregate == ''){
-            yScale = d3.scaleLinear().domain([-60, 60]).range([lineChartObj.height, 0]);
-        }
-        else if(store.state.controlParams.aggregate == 'hours'){
-            yScale = d3.scaleLinear().domain([-1400, 1800]).range([lineChartObj.height, 0]);
-        }
-        else if(store.state.controlParams.aggregate == 'day'){
-            yScale = d3.scaleLinear().domain([-4000, 20000]).range([lineChartObj.height, 0]);
-        }
-        else if(store.state.controlParams.aggregate == 'week'){
-            yScale = d3.scaleLinear().domain([0, 100000]).range([lineChartObj.height, 0]);
-        }
         // else if(store.state.controlParams.aggregate == 'day'){
-        //     yScale = d3.scaleLinear().domain([-2000, 1000]).range([lineChartObj.height, 0]);
+        //     yScale = d3.scaleLinear().domain([-4000, 20000]).range([lineChartObj.height, 0]);
         // }
         // else if(store.state.controlParams.aggregate == 'week'){
-        //     yScale = d3.scaleLinear().domain([-6000, 2000]).range([lineChartObj.height, 0]);
+        //     yScale = d3.scaleLinear().domain([0, 100000]).range([lineChartObj.height, 0]);
         // }
-        else if(store.state.controlParams.aggregate == 'month'){
-            yScale = d3.scaleLinear().domain([0, 400000]).range([lineChartObj.height, 0]);
-        }
-        else if(store.state.controlParams.aggregate == 'year'){
-            yScale = d3.scaleLinear().domain([0, 5000000]).range([lineChartObj.height, 0]);
-        }
+        // else if(store.state.controlParams.aggregate == 'month'){
+        //     yScale = d3.scaleLinear().domain([0, 400000]).range([lineChartObj.height, 0]);
+        // }
+        // else if(store.state.controlParams.aggregate == 'year'){
+        //     yScale = d3.scaleLinear().domain([0, 5000000]).range([lineChartObj.height, 0]);
+        // }
         // yScale = d3.scaleLinear().domain([-finalValue, finalValue]).range([lineChartObj.height, 0]);
         yAxis = d3.axisLeft(yScale)
         if (yAxisG !== null && yAxisG !== undefined) {

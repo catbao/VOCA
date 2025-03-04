@@ -6,13 +6,13 @@ const { Pool, types } = require('pg');
 // 将NUMERIC类型的数据自动转换为浮点数
 types.setTypeParser(1700, (val) => parseFloat(val));
 
-const dbConfig = JSON.parse(fs.readFileSync("../initdb/dbconfig.json").toString());
+const dbConfig = JSON.parse(fs.readFileSync("./initdb/dbconfig.json").toString());
 console.log(dbConfig)
 if (!dbConfig['username'] || !dbConfig['hostname'] || !dbConfig['password'] || !dbConfig['db']) {
     throw new Error("db config error");
 }
 
-const tableName = process.argv[2];  // 只需要传入表名
+const tableName = 'nycdata';  // 只需要传入表名
 const tv_tableName = tableName
 const OM3_tableName = tableName + '_om3'
 const flagName = OM3_tableName + '.flagz'

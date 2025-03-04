@@ -6,7 +6,7 @@
        VOCA
       </a>
 
-      <a href="https://docs.google.com/document/d/1OFRmg6ShyKj1i4w2zbHGIOyjUxGR7tcvreKuWCIerHk/edit?usp=sharing">user guide</a>
+      <!-- <a href="https://docs.google.com/document/d/1OFRmg6ShyKj1i4w2zbHGIOyjUxGR7tcvreKuWCIerHk/edit?usp=sharing">user guide</a> -->
     
       <!-- <button type="button" class="btn btn-secondary" @click.prevent="openImportPanel">ImportData</button> -->
     </div>
