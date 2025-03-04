@@ -59,10 +59,13 @@ nodejs encode_bigarray_ave.js
 ```
 
 You can also use your own dataset instead of nycdata. Ensure your data follows a similar format:
-
-1、A single t column 
-
-2、Multiple v columns
+```
+t (A single t column)
+v1
+v2
+v3 
+... (Multiple v columns)
+```
 
 
 
