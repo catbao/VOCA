@@ -61,7 +61,7 @@ npm install pg pg-copy-streams
 ```
 node copycsv.js 
 ```
-In this process, please replace the database configuration and file path in importsql.js with your own:
+In this process, please replace the database configuration and file path in copycsv.js with your own:
 ```
 const dbConfig = {    //update to your own
   host: 'localhost',         
