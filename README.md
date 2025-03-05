@@ -72,7 +72,7 @@ const sqlFilePath = '******/nycdata.sql'; //update to your own
 ```
 
 
-3、Configure your db information in the initdb/dbconfig.json file：
+3、Also, configure your database configuration in the initdb/dbconfig.json file：
    ```
    For example:
    "hostname":"127.0.0.1",
