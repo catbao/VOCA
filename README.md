@@ -71,7 +71,7 @@ const dbConfig = {    //update to your own
   port: 5432,              
 };                
 
-const sqlFilePath = '******/nycdata.csv'; //update to your own
+const csvFilePath = '******/nycdata.csv'; //update to your own
 ```
 
 
