@@ -54,7 +54,7 @@ We provide an example dataset, nycdata, that reflects the taxi activity in New Y
 cd /voca-server/initdb  
 ```
 
-(2) Run the Encoding Script: Execute the importsql.js script to import the dataset. 
+(2) Run the Importing Script: Execute the importsql.js script to import the dataset. 
 ```
 node importsql.js 
 ```
