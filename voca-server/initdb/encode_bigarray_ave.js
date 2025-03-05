@@ -16,7 +16,7 @@
 const fs = require("fs");
 //const { Pool } = require('pg');
 const { Pool, types } = require('pg');
-// 将NUMERIC类型的数据自动转换为浮点数
+
 types.setTypeParser(1700, (val) => parseFloat(val));
 console.log("Current directory:", process.cwd());
 console.log("Files in directory:", fs.readdirSync('.'));
@@ -26,9 +26,9 @@ if (!dbConfig['username'] || !dbConfig['hostname'] || !dbConfig['password'] || !
     throw new Error("db config error");
 }
 
-const CHUNK_SIZE = 100000000; // 每块1亿条记录
+const CHUNK_SIZE = 100000000; 
 
-const tableName = 'nycdata';  // 只需要传入表名
+const tableName = 'nycdata'; 
 const tv_tableName = tableName
 const OM3_tableName = tableName + '_om3'
 const flagName = OM3_tableName + '.flagz'
@@ -58,7 +58,6 @@ async function getVColumns() {
     }
 }
 
-// 删除表格数据的函数
 async function dropAndCreateTable(vColumns) {
     const dropTableSQL = `DROP TABLE IF EXISTS ${OM3_tableName};`;
 
@@ -87,7 +86,6 @@ async function dropAndCreateTable(vColumns) {
     }
 }
 
-// 删除 .flagz 文件
 function deleteFlagFile(vColumns) {
     vColumns.forEach(v => {
         const flagFilePath = `../flags/${OM3_tableName}_${v}` + '.flagz';
@@ -117,7 +115,7 @@ async function computeTableFlag(bigData, columnName) {
     maxT++;
 
     const bufLen = 2 ** Math.ceil(Math.log2(maxT || 1));
-    const arrayBuffer = Buffer.alloc(bufLen); // 使用 Buffer 代替临时数组
+    const arrayBuffer = Buffer.alloc(bufLen); 
     let tempArray = new BigArray(CHUNK_SIZE)
 
     bigData.forEach((item) => {
@@ -157,7 +155,6 @@ async function computeTableFlag(bigData, columnName) {
 }
 
 
-// 自动创建表的函数
 async function createTableIfNotExists(vColumns) {
     // Dynamically create columns for each v column
     const createColumns = vColumns.map(v => `
@@ -182,7 +179,6 @@ async function createTableIfNotExists(vColumns) {
     }
 }
 
-// 创建 tablenum 表
 async function createTablenumTable() {
     const createTablenumSQL = `
         CREATE TABLE IF NOT EXISTS tablenum (
