@@ -34,7 +34,7 @@ npm: 8.19.4
 postgres: 14.12
 ```
 
-### Database Initialization
+### Data Preparation
 
 We provide an example dataset, nycdata, that reflects the taxi activity in New York City. You can download the csv file from [Google Drive](https://drive.google.com/file/d/1Ab4erGlKN9NFXj8WhFHGy6XoaTH4kNKu/view?usp=sharing). We recommend using PostgreSQL for importing the database. 
 
@@ -100,12 +100,12 @@ node encode_bigarray_ave.js
 You can also use your own dataset instead of `nycdata`, just make sure it consists of a single `t` column and multiple `v` columns. For example, the first five rows of `nycdata.csv` look like this:
 
 ```
-t,v1,v2,v3,v4,v5,v6
-0,13,0,8,6,1,0
-1,17,0,11,11,5,0
-2,34,0,8,9,6,0
-3,23,0,6,9,5,0
-4,32,0,9,9,6,0
+"t","v1","v2","v3","v4","v5","v6","v7","v9","v10","v11"
+0,13,0,8,6,1,0,1,1,86,11
+1,17,0,11,11,5,0,2,3,105,12
+2,34,0,8,9,6,0,2,1,129,7
+3,23,0,6,9,5,0,4,2,164,11
+4,32,0,9,9,6,0,2,0,203,8
 ```
 
 
