@@ -36,7 +36,7 @@ postgres: 14.12
 
 ### Database Initialization
 
-We provide an example dataset, nycdata, that reflects the taxi activity in New York City. You can download the sql file from [Google Drive](https://drive.google.com/file/d/1lyfn_keijJyQtDtWdn_rpCXy7F6Nvx1n/view?usp=sharing). We recommend using PostgreSQL for importing the database. 
+We provide an example dataset, nycdata, that reflects the taxi activity in New York City. You can download the csv file from [Google Drive](https://drive.google.com/file/d/1Ab4erGlKN9NFXj8WhFHGy6XoaTH4kNKu/view?usp=sharing). We recommend using PostgreSQL for importing the database. 
 
 #### Step 1: Import the Database
 1、 Install PostgreSQL: If PostgreSQL is not already installed, download and install it from the [official website](https://www.postgresql.org/download/). We recommend using version 14.
@@ -53,10 +53,13 @@ We provide an example dataset, nycdata, that reflects the taxi activity in New Y
 ```
 cd /voca-server/initdb  
 ```
-
-(2) Run the Importing Script: Execute the importsql.js script to import the dataset. 
+(2) Install necessary dependencies：
 ```
-node importsql.js 
+npm install pg pg-copy-streams
+```
+(3) Run the Importing Script: Execute the copycsv.js script to import the dataset. 
+```
+node copycsv.js 
 ```
 In this process, please replace the database configuration and file path in importsql.js with your own:
 ```
@@ -68,7 +71,7 @@ const dbConfig = {    //update to your own
   port: 5432,              
 };                
 
-const sqlFilePath = '******/nycdata.sql'; //update to your own
+const sqlFilePath = '******/nycdata.csv'; //update to your own
 ```
 
 
