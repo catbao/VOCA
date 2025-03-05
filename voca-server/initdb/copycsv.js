@@ -5,12 +5,12 @@ const copyFrom = require("pg-copy-streams").from;
 const dbConfig = {       //update to your own
     user: 'postgres',        
     host: 'localhost',       
-    database: 'postgres',  
-    password: '******',     
+    database: 'postgres1',  
+    password: '000927',     
     port: 5432,          
   };                
   
-const CSV_FILE_PATH = "******/nycdata.csv"; // update to your own
+const CSV_FILE_PATH = "/Users/bao/Desktop/nycdata.csv"; // update to your own
 const TABLE_NAME = "nycdata";
 
 const pool = new Pool(dbConfig);
@@ -32,7 +32,7 @@ async function createTableIfNotExists() {
       );
     `;
     await client.query(createTableQuery);
-    console.log(`Table ${TABLE_NAME} exists.`);
+    console.log(`Table ${TABLE_NAME} exists. Importing...`);
 }
 
 async function importCsvWithCopy() {
@@ -51,9 +51,10 @@ async function importCsvWithCopy() {
 
     stream.on("end", async () => {
       await client.query("COMMIT");
-      console.log("CSV FILE IMPORTED");
+      console.log("CSV FILE IMPORTED.");
       client.release();
       pool.end();
+      process.exit(0);
     });
 
     stream.on("error", async (err) => {
@@ -64,7 +65,7 @@ async function importCsvWithCopy() {
     });
   } catch (err) {
     await client.query("ROLLBACK");
-    console.error("CSV FILE IMPORTED:", err);
+    console.error("Fail:", err);
     client.release();
     pool.end();
   }

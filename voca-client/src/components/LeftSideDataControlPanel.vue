@@ -2,6 +2,7 @@
   <div class="data-control-panel radius">
 
     <div class="d-flex ms-2" marginTop="10px">
+      <!-- <span style="margin-left: 4px; color: #909399; font-size: 15px;">Display size:</span> -->
         <input type="number" class="form-control form-control-sm dim-input" v-model="widthRef" />
         <span style="line-height: 31px">×</span>
         <input type="number" class="form-control form-control-sm dim-input" v-model="heightRef" />
@@ -141,6 +142,7 @@
 
 
     <div class="class-choose-container mt-2 ms-1" >
+      <span style="margin-left: 4px; color: #909399; font-size: 15px;">Dataset:</span>
       <el-select v-model="currentMultiClass" placeholder="Select" size="medium" @change="handleMultiLineClassChange"
       @focus="onFocus">
       <el-option v-for="(item, idx) in multiLineClassAndLinesMap.get('tables')" :key="idx" :label="item" :value="item">
@@ -149,6 +151,7 @@
     </div>
 
     <div class="class-choose-container2 mt-2 ms-1">
+      <span style="margin-left: 4px; color: #909399; font-size: 15px;">Columns:</span>
       <el-select v-model="currentMultiClassLines" multiple
       placeholder="Select" size="medium" @change="handleColumnsChange"
       @focus="onFocusColumns">
@@ -158,6 +161,7 @@
     </div>
 
     <div class="compute-line-container mt-2 ms-1">
+      <span style="margin-left: 4px; color: #909399; font-size: 15px;">Operator:</span>
       <el-select v-model="selectedOption" placeholder="Operator" @change="handleSelectedOption" @focus="onFocusFunctions">
         <el-option v-for="(item, idx) in multiLineClassAndLinesMap.get('functions')" :key="idx" :label="item" :value="item">
         </el-option>
@@ -165,6 +169,7 @@
     </div>
 
     <div class="compute-line-container mt-2 ms-1">
+      <span style="margin-left: 4px; color: #909399; font-size: 15px;">Aggregate level:</span>
       <el-select v-model="selectedAggregate" placeholder="Aggregate" @change="handleSelectedAggregate" @focus="onFocusAggregate">
         <el-option v-for="(item, idx) in multiLineClassAndLinesMap.get('aggregates')" :key="idx" :label="item" :value="item">
         </el-option>
@@ -173,7 +178,9 @@
 
 
     <div class="mt-2 mb-1">
+      <span style="margin-left: 4px; color: #909399; font-size: 15px;">Experiment:</span>
       <el-select v-model="selectedExperiment" placeholder="Experiment" @change="handleSelectedExperiment" @focus="onFocusExperiment">
+        
         <!-- <el-option v-for="(item, idx) in multiLineClassAndLinesMap.get('experiments')" :key="idx" :label="item" :value="item"> -->
         <el-option v-for="(item, idx) in ['ours']" :key="idx" :label="item" :value="item"> 
         </el-option>
@@ -182,6 +189,7 @@
 
 
     <div class="mt-2 mb-1">
+      <span style="margin-left: 4px; color: #909399; font-size: 15px;">Error bound:</span>
         <el-input v-model="errorBound" placeholder="errorBound" />
     </div>
 
