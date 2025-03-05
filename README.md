@@ -1,7 +1,7 @@
 # VOCA System
 
 ## Project Setup
-You can run voca-client and voca-server on your computer at the same time. 
+To run this prototype system, execute both the **voca-client** and **voca-server** applications concurrently on the same local machine.
 
 
 ### VOCA Client
@@ -94,16 +94,15 @@ cd /voca-server/initdb
 node encode_bigarray_ave.js 
 ```
 
-You can also use your own dataset instead of nycdata. Ensure your data follows a similar format:
-```
-t (A single t column)
-v1
-v2
-v3 
-... (Multiple v columns)
-```
-For example, this is the first five rows of a dataset with 1 time column and 6 value columns.
-![Alt text](image.png)
+You can also use your own dataset instead of `nycdata`, just make sure it consists of a single `t` column and multiple `v` columns. For example, the first five rows of `nycdata.csv` look like this:
 
+```
+t,v1,v2,v3,v4,v5,v6
+0,13,0,8,6,1,0
+1,17,0,11,11,5,0
+2,34,0,8,9,6,0
+3,23,0,6,9,5,0
+4,32,0,9,9,6,0
+```
 
 
