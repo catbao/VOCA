@@ -58,17 +58,17 @@ cd /voca-server/initdb
 ```
 node importsql.js 
 ```
-In this process, please pay attention to replace the database configuration and file path in importsql with your own:
+In this process, please replace the database configuration and file path in importsql.js with your own:
 ```
-const dbConfig = {       //update to your own
-  user: 'postgres',        
-  host: 'localhost',       
-  database: 'postgres',  
-  password: '***',     
+const dbConfig = {    //update to your own
+  host: 'localhost',         
+  user: 'postgres',          
+  database: 'postgres',   
+  password: '******',     
   port: 5432,              
 };                
 
-const sqlFilePath = '***/nycdata.sql'; //update to your own
+const sqlFilePath = '******/nycdata.sql'; //update to your own
 ```
 
 
