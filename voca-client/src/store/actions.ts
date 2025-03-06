@@ -384,6 +384,7 @@ const computeLineTransform: ActionHandler<GlobalState, GlobalState> = (context: 
                 minv: tempRes['min_values'][0],
                 maxv: tempRes['max_values'][0],
                 maxLevel,
+                dataMaxLen: tempRes['dataMaxLen'],
                 columnsColor: columns,
                 line1: params
             })

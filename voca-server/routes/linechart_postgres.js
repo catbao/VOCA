@@ -13495,14 +13495,14 @@ async function getexperiment(req, res){
 async function getaggregates(req, res){
 
     res.send({
-        aggregates: ["","hours","day","week","month","year"]
+        aggregates: ["unaggregated","day","week","month","year"]
     })
 }
 
 async function getfunctions(req, res){
 
     res.send({
-        functions: ["", "func1","boxcox_0","boxcox_1_2","boxcox_1","boxcox_2","+", "-", "*", "/", "func4", "mean", "variance"]
+        functions: ["show", "func1","boxcox_0","boxcox_1_2","boxcox_1","boxcox_2","+", "-", "*", "/", "func4", "mean", "variance"]
     })
 }
 

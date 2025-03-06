@@ -338,7 +338,7 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         console.log("showColumns['M4_arrays']:", showColumns['M4_arrays']);
         let min = showColumns['min_values'][0];
         let max = showColumns['max_values'][0];
-        draw(showColumns['M4_arrays']);
+        draw(showColumns['M4_arrays'],[min,max]);
     }
 
     async function resizeW(width: number) {
@@ -410,28 +410,28 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         .attr("stroke-width", 4)
         .attr("fill", "none")
         .on("mouseover", () => {
-            document.body.style.cursor = 'ew-resize';
-            isMouseover = true;
+            // document.body.style.cursor = 'ew-resize';
+            // isMouseover = true;
         })
         .on("mousedown", (e) => {
-            if (isMouseover) {
-                startOffsetX = e.offsetX;
-                interactiveInfo.isMouseDown = true;
-            }
+            // if (isMouseover) {
+            //     startOffsetX = e.offsetX;
+            //     interactiveInfo.isMouseDown = true;
+            // }
         })
         .on("mouseup", () => {
             console.log()
         })
         .on("mousemove", (e) => {
-            if (interactiveInfo.isMouseDown) {
-                svg.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-                dragRect.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-            }
+            // if (interactiveInfo.isMouseDown) {
+            //     svg.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
+            //     dragRect.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
+            // }
         })
         .on("mouseleave", () => {
-            if (!interactiveInfo.isMouseDown) {
-                document.body.style.cursor = 'default';
-            }
+            // if (!interactiveInfo.isMouseDown) {
+            //     document.body.style.cursor = 'default';
+            // }
         })
 
     document

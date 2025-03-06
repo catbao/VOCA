@@ -196,7 +196,7 @@ class InteractionInfo {
 
 let interactionStack: Array<InteractionInfo> = [];
 
-export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
+export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line1:any) {
 
     const svgElement = document.getElementById('my_svg'); 
     if(svgElement){ 
@@ -270,12 +270,13 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
     const indexToTimeStampScale = d3.scaleLinear().domain([nodeIndexRange[0], nodeIndexRange[1]]).range([realTimeStampRange[0], realTimeStampRange[1]]);
     // const xScale: any = d3.scaleLinear().domain([0, multiTimeSeriesObj.width]).range([0, multiTimeSeriesObj.width]);
     const xScale: any = d3.scaleTime().domain([0, multiTimeSeriesObj.width]).range([0, multiTimeSeriesObj.width]);
-    let showTimeXScale: any = d3.scaleTime().domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, multiTimeSeriesObj.width]);
-    // let showTimeXScale: any = d3.scaleLinear().domain([0, rowNumber]).range([0, multiTimeSeriesObj.width]);
+    // let showTimeXScale: any = d3.scaleTime().domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, multiTimeSeriesObj.width]);
+    let showTimeXScale: any = d3.scaleTime().domain([new Date(store.state.controlParams.startTimeStamp), new Date(store.state.controlParams.endTimeStamp)]).range([0, multiTimeSeriesObj.width]);
+    console.log("showTimeXScale:", store.state.controlParams.startTimeStamp, store.state.controlParams.endTimeStamp)
     let yScale: any = d3.scaleLinear().domain([multiTimeSeriesObj.minv, multiTimeSeriesObj.maxv]).range([multiTimeSeriesObj.height, 0]);
 
     // let xReScale = d3.scaleLinear().domain([0, multiTimeSeriesObj.width]).range([0, multiTimeSeriesObj.dataManagers[0].realDataRowNum - 1]);
-    let xReScale = d3.scaleLinear().domain([0, multiTimeSeriesObj.width]).range([0, rowNumber]);
+    let xReScale = d3.scaleLinear().domain([0, multiTimeSeriesObj.width]).range([0, multiTimeSeriesObj.dataMaxLen-1]);
     let showXTimeScale: any = d3.scaleTime().domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, multiTimeSeriesObj.width]);
     // let showXTimeScale: any = d3.scaleLinear().domain([0, rowNumber]).range([0, multiTimeSeriesObj.width]);
 
@@ -299,9 +300,18 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
     timeBrushObj.on("start", () => {
         console.log("start")
     })
-    const timeBoxG = svg.append("g").attr("transform", `translate(${pading.left},${pading.top + 50 + multiTimeSeriesObj.height - 20})`).call(timeBrushObj).call(timeBrushObj.move, [0, multiTimeSeriesObj.width]);
+    // const timeBoxG = svg.append("g").attr("transform", `translate(${pading.left},${pading.top + 50 + multiTimeSeriesObj.height - 20})`).call(timeBrushObj).call(timeBrushObj.move, [0, multiTimeSeriesObj.width]);
     // foreigG.call(timeBoxBrushObj)
-
+    let startTimeBoxG = store.state.controlParams.startTime / multiTimeSeriesObj.dataMaxLen * multiTimeSeriesObj.width;
+    let endTimeBoxG;
+    if(store.state.controlParams.endTime == -1){
+        endTimeBoxG = multiTimeSeriesObj.width;
+    }
+    else{
+        endTimeBoxG = store.state.controlParams.endTime / multiTimeSeriesObj.dataMaxLen * multiTimeSeriesObj.width;
+    }
+    const timeBoxG = svg.append("g").attr("transform", `translate(${pading.left},${pading.top + 50 + multiTimeSeriesObj.height - 20})`).call(timeBrushObj).call(timeBrushObj.move, [startTimeBoxG, endTimeBoxG]);
+    
     let zoomAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${multiTimeSeriesObj.height + pading.top + 50})`).attr("class", 'x axis').call(zoomAxis)
     let xAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${multiTimeSeriesObj.height + pading.top})`).attr("class", 'x axis').call(xAxis)
     let yAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${pading.top})`).attr("class", 'y axis').call(yAxis);
@@ -316,8 +326,8 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
             .attr("height", multiTimeSeriesObj.height + pading.top + pading.bottom)
         foreignObj.attr("width", multiTimeSeriesObj.width);
         xScale.domain([0, multiTimeSeriesObj.width]).range([0, multiTimeSeriesObj.width]);
-        showTimeXScale.domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, multiTimeSeriesObj.width]);
-        // showTimeXScale.domain([0, rowNumber]).range([0, multiTimeSeriesObj.width]);
+        // showTimeXScale.domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, multiTimeSeriesObj.width]);
+        showTimeXScale.domain([new Date(store.state.controlParams.startTimeStamp), new Date(store.state.controlParams.endTimeStamp)]).range([0, multiTimeSeriesObj.width]);
         if (zoomAxisG != null) {
             zoomAxisG.remove();
             zoomAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${multiTimeSeriesObj.height + pading.top + 50})`).attr("class", 'x axis').call(zoomAxis)
@@ -381,14 +391,20 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
         // }
     }
 
-    function draw(columnInfos?: any) {
+    function draw(columnInfos?: any, minmax?: any) {
         // const colorArray1 = ["#b3de69", "#fdb462", "#80b1d3", "#fb8072", "#bebada", "#ffffb3", "#8dd3c7", "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5", "#393b79", "#5254a3", "#6b6ecf", "#9c9ede", "#637939", "#8ca252", "#b5cf6b", "#cedb9c", "#8c6d31", "#bd9e39", "#e7ba52", "#843c39", "#ad494a", "#d6616b", "#e7969c", "#7b4173", "#a55194", "#ce6dbd", "#de9ed6"];
         
         
         drawLengend(multiTimeSeriesObj.width + pading.left - 40, multiTimeSeriesObj, colorArray1)
         canvas.width = multiTimeSeriesObj.width;
         // const curMinMax = computeMinMax(multiTimeSeriesObj);
-        yScale = d3.scaleLinear().domain([multiTimeSeriesObj.minv, multiTimeSeriesObj.maxv]).range([multiTimeSeriesObj.height, 0]);  
+        if(minmax != null){
+            yScale = d3.scaleLinear().domain([minmax[0], minmax[1]]).range([multiTimeSeriesObj.height, 0]);
+        }
+        else{
+            yScale = d3.scaleLinear().domain([multiTimeSeriesObj.minv, multiTimeSeriesObj.maxv]).range([multiTimeSeriesObj.height, 0]);  
+        }
+        // yScale = d3.scaleLinear().domain([multiTimeSeriesObj.minv, multiTimeSeriesObj.maxv]).range([multiTimeSeriesObj.height, 0]);  
         yAxis = d3.axisLeft(yScale);
         // if (store.state.controlParams.currentMode === 'Default') {
         //     yAxis = d3.axisLeft(yScale).tickFormat((val) => {
@@ -402,6 +418,7 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
         yAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${pading.top})`).attr("class", 'y axis').call(yAxis);
 
         showXTimeScale = d3.scaleTime().domain([new Date(Math.floor(indexToTimeStampScale(multiTimeSeriesObj.timeRange[0]))), new Date(Math.floor(indexToTimeStampScale(multiTimeSeriesObj.timeRange[1])))]).range([0, multiTimeSeriesObj.width]);
+        // showXTimeScale = d3.scaleTime().domain([new Date(Math.floor(indexToTimeStampScale(multiTimeSeriesObj.timeRange[0]))), new Date(Math.floor(indexToTimeStampScale(multiTimeSeriesObj.endTime)))]).range([0, multiTimeSeriesObj.width]);
         // showXTimeScale = d3.scaleLinear().domain([0, rowNumber]).range([0, multiTimeSeriesObj.width]);
         xAxis = d3.axisBottom(showXTimeScale);
         if (xAxisG !== null && xAxisG !== undefined) {
@@ -410,6 +427,10 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
         xAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${multiTimeSeriesObj.height + pading.top})`).attr("class", 'x axis').call(xAxis)
         
         columnInfos = multiTimeSeriesObj.columnInfos;
+        if(columnInfos.length == undefined){
+            columnInfos = columnInfos['M4_arrays'];
+            multiTimeSeriesObj.columnInfos = columnInfos;
+        }
         ctx?.clearRect(0, 0, multiTimeSeriesObj.width, multiTimeSeriesObj.height);
         for (let i = 0; i < columnInfos.length; i++) {
             if (multiTimeSeriesObj.isShow[i]) {
@@ -438,15 +459,15 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
                     let interval = (nonUniformColObjs[0].et - nonUniformColObjs[0].st)/3;
                     let wholeInterval = nonUniformColObjs[0].et - nonUniformColObjs[0].st
                     for (let j = 0; j < nonUniformColObjs.length; j++) {
-                        ctx?.moveTo(nonUniformColObjs[j].st/wholeInterval, yScale(nonUniformColObjs[j].sv));
-                        ctx?.lineTo((nonUniformColObjs[j].st + interval)/wholeInterval, yScale(nonUniformColObjs[j].min));
-                        ctx?.moveTo((nonUniformColObjs[j].st + interval)/wholeInterval, yScale(nonUniformColObjs[j].min));
-                        ctx?.lineTo((nonUniformColObjs[j].st + interval*2)/wholeInterval, yScale(nonUniformColObjs[j].max));
-                        ctx?.moveTo((nonUniformColObjs[j].st + interval*2)/wholeInterval, yScale(nonUniformColObjs[j].max));
-                        ctx?.lineTo(nonUniformColObjs[j].et/wholeInterval, yScale(nonUniformColObjs[j].ev));
+                        ctx?.moveTo((nonUniformColObjs[j].st - multiTimeSeriesObj.timeRange[0])/wholeInterval, yScale(nonUniformColObjs[j].sv));
+                        ctx?.lineTo(((nonUniformColObjs[j].st - multiTimeSeriesObj.timeRange[0]) + interval)/wholeInterval, yScale(nonUniformColObjs[j].min));
+                        ctx?.moveTo(((nonUniformColObjs[j].st - multiTimeSeriesObj.timeRange[0]) + interval)/wholeInterval, yScale(nonUniformColObjs[j].min));
+                        ctx?.lineTo(((nonUniformColObjs[j].st - multiTimeSeriesObj.timeRange[0]) + interval*2)/wholeInterval, yScale(nonUniformColObjs[j].max));
+                        ctx?.moveTo(((nonUniformColObjs[j].st - multiTimeSeriesObj.timeRange[0]) + interval*2)/wholeInterval, yScale(nonUniformColObjs[j].max));
+                        ctx?.lineTo((nonUniformColObjs[j].et - multiTimeSeriesObj.timeRange[0])/wholeInterval, yScale(nonUniformColObjs[j].ev));
                         if (j <= nonUniformColObjs.length - 2) {
-                            ctx?.moveTo(nonUniformColObjs[j].et/wholeInterval, yScale(nonUniformColObjs[j].ev));
-                            ctx?.lineTo(nonUniformColObjs[j + 1].st/wholeInterval, yScale(nonUniformColObjs[j + 1].sv));
+                            ctx?.moveTo((nonUniformColObjs[j].et - multiTimeSeriesObj.timeRange[0])/wholeInterval, yScale(nonUniformColObjs[j].ev));
+                            ctx?.lineTo((nonUniformColObjs[j + 1].st - multiTimeSeriesObj.timeRange[0])/wholeInterval, yScale(nonUniformColObjs[j + 1].sv));
                         }
                     }
                     ctx?.stroke();
@@ -519,6 +540,38 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
         // const showColumns = await get(combinedUrl);
         // multiTimeSeriesObj.columnInfos = showColumns;
         // draw();
+        let params = multiTimeSeriesObj.line1;
+        let table_name = params[0];
+        let columns = params[1];
+        let symbol = params[2];
+        let experiment = params[3];
+        width = params[4].width
+        let height = params[4].height
+        let mode = params[6]
+        let parallel = 1;
+        let errorBound = params[5]._value;
+        let startTime = multiTimeSeriesObj.timeRange[0];
+        let endTime = multiTimeSeriesObj.timeRange[1];
+        let interact_type = ''
+        let aggregate = params[7]
+    
+        if(symbol == '+'){
+            symbol='plus'
+        }else if(symbol == '-'){
+            symbol='minus'
+        }else if(symbol == '*'){
+            symbol='multi'
+        }else if(symbol == '/'){
+            symbol='devide'
+        }
+    
+        console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
+        let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
+        store.state.controlParams.startTime = startTime;
+        store.state.controlParams.endTime = endTime;
+        const showColumns = await get(combinedUrl);
+        multiTimeSeriesObj.columnInfos = showColumns;
+        draw();
     }
 
     async function zoomIn(timeRange: Array<number>) {
@@ -534,17 +587,49 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
 
         const needLoadLevel = 2 ** Math.ceil(Math.log2(width))
         console.log("zoomIn....");
-        let mode = "show";
-        let type = ""
-        let parallel = 0;
-        let errorBound = 0;
-        let line1 = multiTimeSeriesObj.line1;
-        const combinedUrl = `/line_chart/case1?table_name=${line1[0]}&table_name_others=${line1[1]}&symbol=${line1[2]}&mode=${mode}&width=${multiTimeSeriesObj.width}&height=${multiTimeSeriesObj.height}&startTime=${multiTimeSeriesObj.timeRange[0]}&endTime=${multiTimeSeriesObj.timeRange[1]}&interact_type=${type}&experiment=${line1[3]}&parallel=${parallel}&errorBound=${errorBound}`;
+        // let mode = "show";
+        // let type = ""
+        // let parallel = 0;
+        // let errorBound = 0;
+        // let line1 = multiTimeSeriesObj.line1;
+        // const combinedUrl = `/line_chart/case1?table_name=${line1[0]}&table_name_others=${line1[1]}&symbol=${line1[2]}&mode=${mode}&width=${multiTimeSeriesObj.width}&height=${multiTimeSeriesObj.height}&startTime=${multiTimeSeriesObj.timeRange[0]}&endTime=${multiTimeSeriesObj.timeRange[1]}&interact_type=${type}&experiment=${line1[3]}&parallel=${parallel}&errorBound=${errorBound}`;
+        // const showColumns = await get(combinedUrl);
+        // multiTimeSeriesObj.columnInfos = showColumns;
+        // draw();
+        let params = line1
+        let table_name = params[0];
+        let columns = params[1];
+        let symbol = params[2];
+        let experiment = params[3];
+        //let width = params[4].width
+        let height = params[4].height
+        let mode = params[6]
+        let parallel = 1;
+        let errorBound = params[5]._value;
+        //要修改
+        let startTime = 0;
+        let endTime = -1;
+        let interact_type = ''
+        let aggregate = params[7]
+    
+        if(symbol == '+'){
+            symbol='plus'
+        }else if(symbol == '-'){
+            symbol='minus'
+        }else if(symbol == '*'){
+            symbol='multi'
+        }else if(symbol == '/'){
+            symbol='devide'
+        }
+    
+        console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
+        let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
+        store.state.controlParams.startTime = startTime;
+        store.state.controlParams.endTime = endTime;
         const showColumns = await get(combinedUrl);
         multiTimeSeriesObj.columnInfos = showColumns;
         draw();
     }
-
 
     //@ts-ignore
     async function brushed({ selection }) {
@@ -564,13 +649,51 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
         if (timeRange[0] < 0) {
             timeRange[0] = 0;
         }
-        if (timeRange[1] > nodeIndexRange[1]) {
-            timeRange[1] = nodeIndexRange[1]
-        }
+        // if (timeRange[1] > rowNumber) {
+        //     timeRange[1] = rowNumber
+        // }
+        multiTimeSeriesObj.timeRange[1] = timeRange[1]
+        multiTimeSeriesObj.timeRange[0] = timeRange[0]
         const interInfo = new InteractionInfo("zoom")
         interInfo.setRangeW(multiTimeSeriesObj.timeRange, multiTimeSeriesObj.width, multiTimeSeriesObj.currentLevel);
         interactionStack.push(interInfo);
-        zoomIn([timeRange[0], timeRange[1]])
+        // zoomIn([timeRange[0], timeRange[1]])
+
+        let params = multiTimeSeriesObj.line1
+        let table_name = params[0];
+        let columns = params[1];
+        let symbol = params[2];
+        let experiment = params[3];
+        let width = params[4].width
+        let height = params[4].height
+        let mode = params[6]
+        let parallel = 1;
+        let errorBound = params[5]._value;
+        let startTime = multiTimeSeriesObj.timeRange[0];
+        let endTime = multiTimeSeriesObj.timeRange[1];
+        let interact_type = ''
+        let aggregate = params[7]
+    
+        if(symbol == '+'){
+            symbol='plus'
+        }else if(symbol == '-'){
+            symbol='minus'
+        }else if(symbol == '*'){
+            symbol='multi'
+        }else if(symbol == '/'){
+            symbol='devide'
+        }
+    
+        console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
+        let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
+        store.state.controlParams.startTime = startTime;
+        store.state.controlParams.endTime = endTime;
+        console.log("showTimeXScale2:", store.state.controlParams.startTimeStamp, store.state.controlParams.endTimeStamp)
+        const showColumns = await get(combinedUrl);
+        let min = showColumns['min_values'][0];
+        let max = showColumns['max_values'][0];
+        multiTimeSeriesObj.columnInfos = showColumns;
+        draw(null, [min, max]);
     }
 
     let timeboxStack: Array<Array<boolean>> = [];
@@ -640,34 +763,34 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj) {
         .attr("stroke-width", 4)
         .attr("fill", "none")
         .on("mouseover", () => {
-            document.body.style.cursor = 'ew-resize';
-            isMouseover = true;
+            // document.body.style.cursor = 'ew-resize';
+            // isMouseover = true;
         })
         .on("mousedown", (e) => {
-            if (isMouseover) {
-                startOffsetX = e.offsetX;
-                interactiveInfo.isMouseDown = true;
-            }
+            // if (isMouseover) {
+            //     startOffsetX = e.offsetX;
+            //     interactiveInfo.isMouseDown = true;
+            // }
         })
         .on("mouseup", () => {
-            console.log();
-            for (let i = 0; i < 30; i++) {
-                multiTimeSeriesObj.isShow[i] = true;
-            }
+            // console.log();
+            // for (let i = 0; i < 30; i++) {
+            //     multiTimeSeriesObj.isShow[i] = true;
+            // }
         })
         .on("mousemove", (e) => {
-            if (interactiveInfo.isMouseDown) {
-                svg.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-                dragRect.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-            }
+            // if (interactiveInfo.isMouseDown) {
+            //     svg.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
+            //     dragRect.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
+            // }
         })
         .on("mouseleave", () => {
-            if (!interactiveInfo.isMouseDown) {
-                document.body.style.cursor = 'default';
-            }
-            for (let i = 0; i < 30; i++) {
-                multiTimeSeriesObj.isShow[i] = true;
-            }
+            // if (!interactiveInfo.isMouseDown) {
+            //     document.body.style.cursor = 'default';
+            // }
+            // for (let i = 0; i < 30; i++) {
+            //     multiTimeSeriesObj.isShow[i] = true;
+            // }
         })
 
     document

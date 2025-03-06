@@ -181,7 +181,8 @@ export interface MultiTimeSeriesObj {
   endTimeStamp: number,
   timeIntervalMs: number,
   line1: any,
-  columnsColor: Array<string>
+  columnsColor: Array<string>,
+  dataMaxLen: number
 }
 
 export interface MultiHaarTimeSeriesObj {
