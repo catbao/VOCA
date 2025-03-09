@@ -321,7 +321,7 @@ const computeLineTransform: ActionHandler<GlobalState, GlobalState> = (context: 
 
     data.then(tempRes => {
         console.log(tempRes);
-        if(symbol != ''){
+        if(symbol != 'show'){
             let startTimeStamp = tempRes['M4_arrays'][0][0].timestamp;
             let endTimeStamp = tempRes['M4_arrays'][0][tempRes['M4_arrays'][0].length-1].timestamp;
             const viewChangeQueryObj: ViewChangeLineChartObj = {

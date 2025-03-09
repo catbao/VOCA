@@ -1,8 +1,9 @@
 <template>
   <div class="data-control-panel radius">
 
+    <span style="margin-left: 8px; margin-top: 2px; margin-bottom: 1px; color: #909399; font-size: 15px;">Display size:</span>
     <div class="d-flex ms-2" marginTop="10px">
-      <!-- <span style="margin-left: 4px; color: #909399; font-size: 15px;">Display size:</span> -->
+      
         <input type="number" class="form-control form-control-sm dim-input" v-model="widthRef" />
         <span style="line-height: 31px">×</span>
         <input type="number" class="form-control form-control-sm dim-input" v-model="heightRef" />

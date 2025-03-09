@@ -3334,8 +3334,6 @@ function finalCompute(screen_m4, func){
         return
     }
     
-    //console.log(M4_array)
-
     for(let i=0;i<M4_array.length;i++){
         let m4=M4_array[i]
 
@@ -7088,7 +7086,7 @@ function initDataInfo(screen_m4){
     screen_m4.screenStartTimestamp = screen_m4.dataStartTime+(screen_m4.screenStart-0)*screen_m4.dataDelta
     screen_m4.screenEndTimestamp = screen_m4.dataStartTime+(screen_m4.screenEnd-0)*screen_m4.dataDelta
 
-    if(screen_m4.func== null || screen_m4.func.params == 'hour'){
+    if(screen_m4.func.params == 'hour'){
         screen_m4.globalIntervalStartTime = getStartOfCurrentHour(screen_m4.screenStartTimestamp)
 
         screen_m4.globalIntervalEndTime = getEndOfCurrentHour(screen_m4.screenEndTimestamp)
@@ -7112,10 +7110,6 @@ function initDataInfo(screen_m4){
         screen_m4.globalIntervalStartTime = getStartOfCurrentYear(screen_m4.screenStartTimestamp)
 
         screen_m4.globalIntervalEndTime = getEndOfCurrentYear(screen_m4.screenEndTimestamp)
-    }else{
-        screen_m4.globalIntervalStartTime = getStartOfCurrentHour(screen_m4.screenStartTimestamp)
-
-        screen_m4.globalIntervalEndTime = getEndOfCurrentHour(screen_m4.screenEndTimestamp)
     }
 
     screen_m4.globalIntervalStart = screen_m4.screenStart + 
@@ -8118,44 +8112,6 @@ function getIntervalArraysFromCache(screen_m4){
 
 }
 
-async function onlyshow(screen_m4, segmentTrees, func,width,height, mode, symble, parallel,errorBound){
-    initDataInfo(screen_m4)
-
-    let screenStart = screen_m4.screenStart
-    let screenEnd = screen_m4.screenEnd
-
-    let M4_arrays = []
-    let min_values = [];
-    let max_values = [];
-
-//console.log(segmentTrees.length)
-
-    for(let i=0;i<segmentTrees.length;i++){
-
-        let M4_array = computeM4TimeSE(width, [screenStart, screenEnd])
-
-        await fenlie(M4_array, screenStart,screenEnd, [segmentTrees[i]], func, []);
-        sympleInitM4([segmentTrees[i]],M4_array,func, mode, parallel, null)
-
-
-        for(let j=0;j<M4_array.length;j++){
-            let m4 = M4_array[j]
-            m4.isCompletedMax = true
-            m4.isCompletedMin = true
-        }
-
-
-        //console.log(M4_array)
-        M4_arrays.push(M4_array)
-    }
-
-    screen_m4.M4_arrays = M4_arrays
-    screen_m4.M4_array = null
-    //screen_m4.M4_array = screen_m4.M4_arrays[0]
-
-    //console.log(screen_m4.M4_arrays.length)
-}
-
 async function aggregateCalculation(screen_m4, segmentTrees, func,width,height, mode, symble, parallel,errorBound){
 
     let threshhold = 5000 * 100
@@ -8188,7 +8144,7 @@ async function aggregateCalculation(screen_m4, segmentTrees, func,width,height, 
         }
 
 
-        if(func != null && func.funName != '' && func.funName != 'show'){
+        if(func != null && func.funName != ''){
             let intervalArray = calBetweenIntervals(intervalArrays, func, screen_m4)
             intervalArrays = []
             //运算完后，只有一个M4
@@ -8493,7 +8449,7 @@ async function computeMultyOrSingle(table,dataCount,columns, func, width,height,
     //构建M4数组，width个M4元素。
     //realDataRowNum = 63
     //to repair经测试，待修改。
-    if(screen_m4.func != null && screen_m4.func.funName!='' && screen_m4.func.params!='unaggregated'){
+    if(screen_m4.func != null && screen_m4.func.funName!=''){
         for(let i=0;i<columns.length;i++){
             let M4_array = computeM4TimeSE(width, [screenStart, screenEnd])
             screen_m4.M4_arrays.push(M4_array)
@@ -8531,20 +8487,9 @@ async function computeMultyOrSingle(table,dataCount,columns, func, width,height,
     //找到该层的第一个节点StartIndex和最后一个节点的EndIndex，
     //let {StartIndex,EndIndex} = getTreeLastSE(segmentTrees[0],width, screenStart, screenEnd)
 
-    //console.log(screen_m4.func.params, func.funName)
-
-    //screen_m4.func,对应的aggregation；func对应的operator
-    if(screen_m4.func != null && screen_m4.func.funName!='' && screen_m4.func.params!='unaggregated'){
+    if(screen_m4.func != null && screen_m4.func.funName!=''){
         console.log('aggregateCalculation')
         return await aggregateCalculation(screen_m4,segmentTrees,func,width,height,mode,symble,parallel,errorBound)
-    }else{
-        //console.log(func)
-
-        if(func == null || func.funName == '' || func.funName == 'show'){
-            console.log('only show')
-
-            return await onlyshow(screen_m4,segmentTrees,func,width,height,mode,symble,parallel,errorBound)
-        }
     }
 
     // if(func.funName == 'avg' && func.mode == 'single'){
@@ -10691,10 +10636,6 @@ function getMinMaxOfM4(M4_array) {
     let max_value = -Infinity;
     for (let i = 0; i < M4_array.length; i++) {
         let m4 = M4_array[i];
-        m4.isCompletedMax = true
-        m4.isCompletedMin = true
-        m4.currentComputingNodeMin=[]
-        m4.currentComputingNodeMax=[]
 
         min_value = Math.min(min_value, m4.st_v, m4.et_v, m4.min, m4.max);
         max_value = Math.max(max_value, m4.st_v, m4.et_v, m4.min, m4.max);
@@ -13781,9 +13722,6 @@ let min_values = []
 let max_values = []
 
 let min=Infinity, max=-Infinity
-
-console.log(screen_m4.M4_arrays.length)
-
 
 for(let i=0;i<screen_m4.M4_arrays.length;i++){
     let M4_array = []
