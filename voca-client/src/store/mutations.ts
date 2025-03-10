@@ -378,7 +378,7 @@ function ColumnsChange(state: GlobalState, lineNames: any) {
         state.controlParams.currentMultiLineClassLines = lineNames.value
     }
     else{
-        console.log("lineNames:", lineNames);
+        console.log("lineName2:", lineNames);
         state.controlParams.currentMultiLineClassLines = lineNames
     }
 }

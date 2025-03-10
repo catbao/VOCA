@@ -659,7 +659,7 @@ export default defineComponent({
           const array = ref([...columns])
           console.log("columns:", array);
           store.commit("ColumnsChange", array);
-          currentMultiClassLines.value = res['columns'];
+          currentMultiClassLines.value = [res['columns'][0], res['columns'][1]];
       });
       
     }
