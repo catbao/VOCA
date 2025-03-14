@@ -3,6 +3,8 @@ import  NoUniformColObj  from "@/model/non-uniform-col-obj";
 import store, { MultiTimeSeriesObj } from "@/store";
 import * as d3 from 'd3';
 import axios from "axios";
+import heightRef from "../components/LeftSideDataControlPanel.vue"
+import widthRef from "../components/LeftSideDataControlPanel.vue"
 // import { batchViewChange, batchGetData } from "../batch/m5batch";
 
 let nameMap: any = [
@@ -394,13 +396,15 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
     function draw(columnInfos?: any, minmax?: any) {
         // const colorArray1 = ["#b3de69", "#fdb462", "#80b1d3", "#fb8072", "#bebada", "#ffffb3", "#8dd3c7", "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5", "#393b79", "#5254a3", "#6b6ecf", "#9c9ede", "#637939", "#8ca252", "#b5cf6b", "#cedb9c", "#8c6d31", "#bd9e39", "#e7ba52", "#843c39", "#ad494a", "#d6616b", "#e7969c", "#7b4173", "#a55194", "#ce6dbd", "#de9ed6"];
         
-        
         drawLengend(multiTimeSeriesObj.width + pading.left - 40, multiTimeSeriesObj, colorArray1)
         canvas.width = multiTimeSeriesObj.width;
         // const curMinMax = computeMinMax(multiTimeSeriesObj);
-        if(minmax != null){
-            yScale = d3.scaleLinear().domain([minmax[0], minmax[1]]).range([multiTimeSeriesObj.height, 0]);
+        if(multiTimeSeriesObj.line1[10][0]._value != 0 || multiTimeSeriesObj.line1[10][1]._value != 0){
+            yScale = d3.scaleLinear().domain([multiTimeSeriesObj.line1[10][0]._value, multiTimeSeriesObj.line1[10][1]._value]).range([multiTimeSeriesObj.height, 0]);
         }
+        // else if(minmax != null){
+        //     yScale = d3.scaleLinear().domain([minmax[0], minmax[1]]).range([multiTimeSeriesObj.height, 0]);
+        // }
         else{
             yScale = d3.scaleLinear().domain([multiTimeSeriesObj.minv, multiTimeSeriesObj.maxv]).range([multiTimeSeriesObj.height, 0]);  
         }
@@ -565,13 +569,13 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
             symbol='devide'
         }
     
-        console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
-        let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
-        store.state.controlParams.startTime = startTime;
-        store.state.controlParams.endTime = endTime;
-        const showColumns = await get(combinedUrl);
-        multiTimeSeriesObj.columnInfos = showColumns;
-        draw();
+        // console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
+        // let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
+        // store.state.controlParams.startTime = startTime;
+        // store.state.controlParams.endTime = endTime;
+        // const showColumns = await get(combinedUrl);
+        // multiTimeSeriesObj.columnInfos = showColumns;
+        // draw();
     }
 
     async function zoomIn(timeRange: Array<number>) {
@@ -637,14 +641,15 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
             isInit = true
             return;
         }
-        if (isResizing) {
-            isRebacking = false;
-            return;
-        }
-        if (isRebacking) {
-            isRebacking = false;
-            return
-        }
+        // if (isResizing) {
+        //     isRebacking = false;
+        //     return;
+        // }
+        // if (isRebacking) {
+        //     isRebacking = false;
+        //     return
+        // }
+        xReScale = d3.scaleLinear().domain([0, multiTimeSeriesObj.width]).range([0, multiTimeSeriesObj.dataMaxLen - 1]);
         const timeRange = [Math.floor(xReScale(selection[0])), Math.floor(xReScale(selection[1]))];
         if (timeRange[0] < 0) {
             timeRange[0] = 0;
@@ -659,12 +664,16 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
         interactionStack.push(interInfo);
         // zoomIn([timeRange[0], timeRange[1]])
 
+        // heightRef.value = multiTimeSeriesObj.height;
+        // widthRef.value = multiTimeSeriesObj.width;
+
         let params = multiTimeSeriesObj.line1
         let table_name = params[0];
         let columns = params[1];
         let symbol = params[2];
         let experiment = params[3];
-        let width = params[4].width
+        // let width = params[4].width
+        let width = multiTimeSeriesObj.width;
         let height = params[4].height
         let mode = params[6]
         let parallel = 1;
@@ -763,40 +772,41 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
         .attr("stroke-width", 4)
         .attr("fill", "none")
         .on("mouseover", () => {
-            // document.body.style.cursor = 'ew-resize';
-            // isMouseover = true;
+            document.body.style.cursor = 'ew-resize';
+            isMouseover = true;
         })
         .on("mousedown", (e) => {
-            // if (isMouseover) {
-            //     startOffsetX = e.offsetX;
-            //     interactiveInfo.isMouseDown = true;
-            // }
+            if (isMouseover) {
+                startOffsetX = e.offsetX;
+                interactiveInfo.isMouseDown = true;
+            }
         })
         .on("mouseup", () => {
-            // console.log();
-            // for (let i = 0; i < 30; i++) {
-            //     multiTimeSeriesObj.isShow[i] = true;
-            // }
+            console.log();
+            for (let i = 0; i < 30; i++) {
+                multiTimeSeriesObj.isShow[i] = true;
+            }
         })
         .on("mousemove", (e) => {
-            // if (interactiveInfo.isMouseDown) {
-            //     svg.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-            //     dragRect.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-            // }
+            if (interactiveInfo.isMouseDown) {
+                svg.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
+                dragRect.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
+            }
         })
         .on("mouseleave", () => {
-            // if (!interactiveInfo.isMouseDown) {
-            //     document.body.style.cursor = 'default';
-            // }
-            // for (let i = 0; i < 30; i++) {
-            //     multiTimeSeriesObj.isShow[i] = true;
-            // }
+            if (!interactiveInfo.isMouseDown) {
+                document.body.style.cursor = 'default';
+            }
+            for (let i = 0; i < 30; i++) {
+                multiTimeSeriesObj.isShow[i] = true;
+            }
         })
 
     document
         .getElementById("content-container")!
         .addEventListener("mousemove", (e) => {
             if (interactiveInfo.isMouseDown) {
+                // document.dispatchEvent(new Event("mouseup"));
                 svg.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
                 dragRect.attr("width", multiTimeSeriesObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
             }
@@ -809,8 +819,12 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
                 interactiveInfo.isMouseDown = false;
                 isMouseover = false;
                 document.body.style.cursor = 'default';
+
                 let preWidth = multiTimeSeriesObj.width;
                 multiTimeSeriesObj.width = multiTimeSeriesObj.width + (e.offsetX - startOffsetX);
+                dragRect.attr("width", multiTimeSeriesObj.width+pading.left+pading.right);
+                
+
                 if (multiTimeSeriesObj.width === preWidth) {
                     return
                 }
@@ -818,11 +832,26 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
                 interInfo.setRangeW(multiTimeSeriesObj.timeRange, multiTimeSeriesObj.width, multiTimeSeriesObj.currentLevel);
                 interactionStack.push(interInfo);
                 resizeW(multiTimeSeriesObj.width)
+
+                // document.getElementById("displayWidth")!.value = multiTimeSeriesObj.width+pading.left+pading.right;
+                let newWidth = multiTimeSeriesObj.width;
+                const widthInput = document.getElementById("displayWidth") as HTMLInputElement;
+                if (widthInput) {
+                    widthInput.value = newWidth.toString();
+                }
+                store.state.controlParams.finalWidth = newWidth;
             }
             for (let i = 0; i < 30; i++) {
                 multiTimeSeriesObj.isShow[i] = true;
             }
         });
+
+    const updateRectWidth = () => {
+        const svgWidth = parseFloat(svg.attr("width"));
+        dragRect.attr("width", Math.min(svgWidth, parseFloat(dragRect.attr("width")))); 
+    };
+    document.getElementById("content-container")!.addEventListener("mousemove", updateRectWidth);
+
     svg.on("contextmenu", (e) => {
 
         if (interactionStack.length > 0) {

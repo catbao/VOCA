@@ -6,6 +6,9 @@ import * as d3 from 'd3';
 import { Commit, ActionContext, ActionHandler } from 'vuex'
 import axios from "axios";
 import html2canvas from "html2canvas";
+import heightRef from "../components/LeftSideDataControlPanel.vue"
+import widthRef from "../components/LeftSideDataControlPanel.vue"
+import { nextTick } from 'vue';
 import { formatRenderDataForViewChange, formatNonPowDataForViewChange } from '../helper/format-data';
 class InteractionInfo {
     type: string
@@ -134,11 +137,12 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         foreignObj.attr("width", lineChartObj.width);
         xScale.domain([0, lineChartObj.width]).range([0, lineChartObj.width]);
         // showTimeXScale.domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, lineChartObj.width]);
-        showTimeXScale = d3.scaleTime().domain([new Date(store.state.controlParams.startTimeStamp), new Date(store.state.controlParams.endTimeStamp)]).range([0, lineChartObj.width]);
-        if(lineChartObj.timeRange[1]<=0){
-            lineChartObj.timeRange[1] = rowNumber
-            // lineChartObj.timeRange[1] = lineChartObj.dataMaxLen;
-        }
+        showTimeXScale.domain([new Date(store.state.controlParams.startTimeStamp), new Date(store.state.controlParams.endTimeStamp)]).range([0, lineChartObj.width]);
+        let zoomAxis = d3.axisBottom(showTimeXScale);
+        // if(lineChartObj.timeRange[1]<=0){
+        //     lineChartObj.timeRange[1] = rowNumber
+        //     // lineChartObj.timeRange[1] = lineChartObj.dataMaxLen;
+        // }
         // showXTimeScale = d3.scaleLinear().domain([lineChartObj.timeRange[0] , lineChartObj.timeRange[1]]).range([0, lineChartObj.width]);
         // showXTimeScale = d3.scaleTime().domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, lineChartObj.width]);
 
@@ -150,9 +154,15 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         timeBrushObj.extent([[0, 10], [lineChartObj.width, 40]]);
         timeBrushObj.on("end", brushed);
         timeBrushObj.on("start", () => {
-            console.log("start")
+            console.log("start, new width:", lineChartObj.width)
         })
+        console.log("start, timerange:", lineChartObj.timeRange[0], lineChartObj.timeRange[1])
         const tempReScale=d3.scaleLinear().domain([0, lineChartObj.maxLen - 1]).range([0,lineChartObj.width]);
+
+        let startTimeBoxG = lineChartObj.timeRange[0] / lineChartObj.dataMaxLen * lineChartObj.width;
+        let endTimeBoxG = lineChartObj.timeRange[1] / lineChartObj.dataMaxLen * lineChartObj.width;
+        // const timeBoxG = svg.append("g").attr("transform", `translate(${70},${70 + lineChartObj.height - 20})`).call(timeBrushObj).call(timeBrushObj.move, [startTimeBoxG, endTimeBoxG]);
+        
         timeBoxG.call(timeBrushObj).call(timeBrushObj.move, [tempReScale(lineChartObj.timeRange[0]), tempReScale(lineChartObj.timeRange[1])]);
         ctx = canvas.getContext("2d");
     }
@@ -162,7 +172,10 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         
         canvas.width = lineChartObj.width;
         // yScale = d3.scaleLinear().domain([lineChartObj.data.minv, lineChartObj.data.maxv]).range([lineChartObj.height, 0]);
-        if(minmax != null){
+        if(line1[10][0]._value != 0 || line1[10][1]._value != 0){
+            yScale = d3.scaleLinear().domain([line1[10][0]._value, line1[10][1]._value]).range([lineChartObj.height, 0]);
+        }
+        else if(minmax != null){
             yScale = d3.scaleLinear().domain([minmax[0], minmax[1]]).range([lineChartObj.height, 0]);
         }
         else{
@@ -193,7 +206,10 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
             yAxisG.remove();
         }
         yAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${pading.top})`).attr("class", 'y axis').call(yAxis);
-
+        // if(lineChartObj.timeRange[1] > lineChartObj.dataMaxLen){
+        //     lineChartObj.timeRange[1] = lineChartObj.dataMaxLen;
+        // }
+        console.log("when draw, timerange:", lineChartObj.timeRange[0], lineChartObj.timeRange[1], lineChartObj.width);
         showXTimeScale = d3.scaleTime().domain([new Date(Math.floor(indexToTimeStampScale(lineChartObj.timeRange[0]))), new Date(Math.floor(indexToTimeStampScale(lineChartObj.timeRange[1])))]).range([0, lineChartObj.width]);
         // showXTimeScale = d3.scaleTime().domain([new Date(lineChartObj.startTime), new Date(lineChartObj.endTime)]).range([0, lineChartObj.width]);
         // showXTimeScale = d3.scaleTime().domain([new Date(Math.floor(indexToTimeStampScale(store.state.controlParams.startTime))), new Date(Math.floor(indexToTimeStampScale(store.state.controlParams.endTime)))]).range([0, lineChartObj.width]);
@@ -280,7 +296,15 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         //     return
         // }
 
+        // console.log("brush width:", lineChartObj.width);
+        xReScale = d3.scaleLinear().domain([0, lineChartObj.width]).range([0, lineChartObj.dataMaxLen - 1]);
         const timeRange = [Math.floor(xReScale(selection[0])), Math.floor(xReScale(selection[1]))];
+        console.log("brush timerange,width:", lineChartObj.timeRange[0], lineChartObj.timeRange[1], lineChartObj.width);
+        // heightRef.value = lineChartObj.height;
+        // widthRef.value = lineChartObj.width;
+        // nextTick(() => {
+        //     console.log('组件已重新渲染');
+        //   });
 
         if (timeRange[0] < 0) {
             timeRange[0] = 0;
@@ -307,7 +331,8 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         let columns = params[1];
         let symbol = params[2];
         let experiment = params[3];
-        let width = params[4].width
+        // let width = params[4].width
+        let width = lineChartObj.width;
         let height = params[4].height
         let mode = params[6]
         let parallel = 1;
@@ -328,8 +353,6 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         }
     
         console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
-    
-    //http://10.16.13.21:35811/postgres/line_chart/start?table_name=testto&columns=v1,v2,v3,v4&symbol=+&mode=single&width=600&height=600&startTime=0&endTime=-1&interact_type=zoom&experiment=ours&parallel=0&errorBound=0.01
         let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
 
         store.state.controlParams.startTime = startTime;
@@ -343,22 +366,15 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
 
     async function resizeW(width: number) {
         isResizing = true;
-        const currentLevel = lineChartObj.currentLevel;
+        // const currentLevel = lineChartObj.currentLevel;
 
         lineChartObj.width = width;
         updateCanvasWidth();
 
         //@ts-ignore
         canvas.style.width = lineChartObj.width;
-
         console.log("resize....");
         console.log(width);
-        // let mode = "compute";
-        // let type = ""
-        // let parallel = 0;
-        // let errorBound = 0;
-        // const combinedUrl = `/line_chart/case1?table_name=${line1[0]}&table_name_others=${line1[1]}&symbol=${line1[2]}&mode=${mode}&width=${lineChartObj.width}&height=${lineChartObj.height}&startTime=${lineChartObj.timeRange[0]}&endTime=${lineChartObj.timeRange[1]}&interact_type=${type}&experiment=${line1[3]}&parallel=${parallel}&errorBound=${errorBound}`;
-
 
         let params = line1
         let table_name = params[0];
@@ -386,17 +402,13 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
             symbol='devide'
         }
     
+        // console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
+        // let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
     
-        console.log(table_name,experiment,columns,symbol,'',width,height,mode,parallel,errorBound,startTime,endTime, interact_type, aggregate)
-    
-    //http://10.16.13.21:35811/postgres/line_chart/start?table_name=testto&columns=v1,v2,v3,v4&symbol=+&mode=single&width=600&height=600&startTime=0&endTime=-1&interact_type=zoom&experiment=ours&parallel=0&errorBound=0.01
-        let combinedUrl = `/line_chart/start?table_name=${table_name}&columns=${columns}&symbol=${symbol}&mode=${mode}&width=${width}&height=${height}&startTime=${startTime}&endTime=${endTime}&interact_type=${interact_type}&experiment=${experiment}&parallel=${parallel}&errorBound=${errorBound}&aggregate=${aggregate}`;
-    
-
-
-
-        const showColumns = await get(combinedUrl);
-        draw(showColumns['M4_arrays']);
+        // const showColumns = await get(combinedUrl);
+        // let min = showColumns['min_values'][0];
+        // let max = showColumns['max_values'][0];
+        // draw(showColumns['M4_arrays'],[min,max]);
     }
     let isMouseover = false;
     let startOffsetX = 0;
@@ -410,36 +422,43 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         .attr("stroke-width", 4)
         .attr("fill", "none")
         .on("mouseover", () => {
-            // document.body.style.cursor = 'ew-resize';
-            // isMouseover = true;
+            document.body.style.cursor = 'ew-resize';
+            isMouseover = true;
         })
         .on("mousedown", (e) => {
-            // if (isMouseover) {
-            //     startOffsetX = e.offsetX;
-            //     interactiveInfo.isMouseDown = true;
-            // }
+            if (isMouseover) {
+                startOffsetX = e.offsetX;
+                interactiveInfo.isMouseDown = true;
+            }
         })
         .on("mouseup", () => {
             console.log()
         })
         .on("mousemove", (e) => {
-            // if (interactiveInfo.isMouseDown) {
-            //     svg.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-            //     dragRect.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-            // }
+            if (interactiveInfo.isMouseDown) {
+                console.log("33333");
+                let newWidth = lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX);
+                svg.attr("width", newWidth);
+                dragRect.attr("width", newWidth);
+            }
         })
         .on("mouseleave", () => {
-            // if (!interactiveInfo.isMouseDown) {
-            //     document.body.style.cursor = 'default';
-            // }
+            if (!interactiveInfo.isMouseDown) {
+                document.body.style.cursor = 'default';
+            }
         })
 
     document
         .getElementById("content-container")!
         .addEventListener("mousemove", (e) => {
             if (interactiveInfo.isMouseDown) {
-                svg.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
-                dragRect.attr("width", lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX));
+                console.log("11111");
+                // svg.select(".x.axis").attr("transform", `translate(${pading.left}, ${lineChartObj.height + pading.top})`);
+                document.dispatchEvent(new Event("mouseup"));
+                let newWidth = lineChartObj.width + pading.right + pading.left + (e.offsetX - startOffsetX);
+                svg.attr("width", newWidth);
+                // svg.attr("width", newWidth+10);
+                dragRect.attr("width", newWidth);
             }
         });
 
@@ -447,20 +466,63 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         .getElementById("content-container")!
         .addEventListener("mouseup", (e) => {
             if (interactiveInfo.isMouseDown) {
+                console.log("22222");
                 interactiveInfo.isMouseDown = false;
                 isMouseover = false;
                 document.body.style.cursor = 'default';
+
+                // const finalWidth = parseFloat(svg.attr("width"));
+                // dragRect.attr("width", finalWidth);
+
                 let preWidth = lineChartObj.width;
                 lineChartObj.width = lineChartObj.width + (e.offsetX - startOffsetX);
+                dragRect.attr("width", lineChartObj.width+pading.left+pading.right);
+                // lineChartObj.width = finalWidth;
                 if (lineChartObj.width === preWidth) {
                     return
                 }
-                const interInfo = new InteractionInfo("resize")
-                interInfo.setRangeW(lineChartObj.timeRange, lineChartObj.width, lineChartObj.currentLevel);
-                interactionStack.push(interInfo);
+                // const interInfo = new InteractionInfo("resize")
+                // interInfo.setRangeW(lineChartObj.timeRange, lineChartObj.width, lineChartObj.currentLevel);
+                // interactionStack.push(interInfo);
                 resizeW(lineChartObj.width)
+
+                let newWidth = lineChartObj.width;
+                const widthInput = document.getElementById("displayWidth") as HTMLInputElement;
+                // if (widthInput) {
+                    // const newWidth = widthInput.value;
+                    widthInput.value = newWidth.toString();
+                    widthRef.value = newWidth;
+                // }
+                store.state.controlParams.finalWidth = newWidth;
+
+                const event = new Event('change');
+                document.getElementById("displayWidth")!.dispatchEvent(event);
             }
         });
+
+        document.getElementById("displayWidth")!
+            .addEventListener("change", (e) => {
+                const widthInput = document.getElementById("displayWidth") as HTMLInputElement;
+                const newWidth = widthInput.value;
+                console.log("newWidth is:", newWidth);
+                
+                widthInput.value = newWidth.toString();
+                widthRef.value = newWidth;
+                console.log("768");
+                // 更新 lineChartObj.width，防止被默认值覆盖
+                // lineChartObj.width = newWidth;
+
+                // 仅调整 SVG 大小，不重新创建
+                // d3.select("svg").attr("width", newWidth);
+        });
+
+    
+        const updateRectWidth = () => {
+            const svgWidth = parseFloat(svg.attr("width"));
+            dragRect.attr("width", Math.min(svgWidth, parseFloat(dragRect.attr("width")))); 
+        };
+        document.getElementById("content-container")!.addEventListener("mousemove", updateRectWidth);
+        
 
     return draw
 }

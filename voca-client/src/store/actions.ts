@@ -287,6 +287,7 @@ const computeLineTransform: ActionHandler<GlobalState, GlobalState> = (context: 
     let endTime = params[9];
     let interact_type = ''
     let aggregate = params[7]
+    let y_range = [params[10][0]._value, params[10][1]._value]
 
     if(symbol == '+'){
         symbol='plus'
@@ -326,7 +327,8 @@ const computeLineTransform: ActionHandler<GlobalState, GlobalState> = (context: 
             let endTimeStamp = tempRes['M4_arrays'][0][tempRes['M4_arrays'][0].length-1].timestamp;
             const viewChangeQueryObj: ViewChangeLineChartObj = {
                 id: uuidv4(),
-                width: payload.width,
+                // width: payload.width,
+                width: store.state.controlParams.finalWidth,
                 height: payload.height,
                 x: Math.random() * 60,
                 y: Math.random() * 60,
@@ -378,7 +380,8 @@ const computeLineTransform: ActionHandler<GlobalState, GlobalState> = (context: 
                 startTime: startTime, 
                 endTime: tempRes['M4_arrays'][0][tempRes['M4_arrays'][0].length-1].et, 
                 algorithm: "multitimeseries", 
-                width: payload.width, 
+                // width: payload.width, 
+                width: store.state.controlParams.finalWidth,
                 height: payload.height, 
                 pow: false, 
                 minv: tempRes['min_values'][0],

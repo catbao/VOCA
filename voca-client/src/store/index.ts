@@ -323,6 +323,7 @@ export interface GlobalState {
     endTime: any;
     startTimeStamp: any,
     endTimeStamp: any,
+    finalWidth: any
     // aggregateValue: any
   },
 }
@@ -377,6 +378,7 @@ export default createStore<GlobalState>({
       endTime: -1,
       startTimeStamp: 1420041600000,
       endTimeStamp: 1703565120000,
+      finalWidth: 600
       // aggregateValue: "week"
     }
   },

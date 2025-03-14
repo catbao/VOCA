@@ -453,6 +453,10 @@ function alterNoStopEarly(state: GlobalState, stopEarly: boolean){
     state.controlParams.stopEarly = false;
 }
 
+function updateChartWidth(state: GlobalState, newWidth:any) {
+    state.controlParams.finalWidth = newWidth;
+}
+
 export {
     alterAlgorithm,
     alterMode,
@@ -493,5 +497,7 @@ export {
     alterSelectedComputeOrShow,
     alterStopEarly,
     alterNoStopEarly,
+    
+    updateChartWidth
 }
 

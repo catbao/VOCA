@@ -3,8 +3,10 @@
 
     <span style="margin-left: 8px; margin-top: 2px; margin-bottom: 1px; color: #909399; font-size: 15px;">Display size:</span>
     <div class="d-flex ms-2" marginTop="10px">
-      
-        <input type="number" class="form-control form-control-sm dim-input" v-model="widthRef" />
+        <!-- <KeepAlive> -->
+        <!-- <input type="number" class="form-control form-control-sm dim-input" id="displayWidth" v-model="widthRef" /> -->
+        <input type="number" class="form-control form-control-sm dim-input" id="displayWidth" value="600" /> 
+        <!-- </KeepAlive> -->
         <span style="line-height: 31px">×</span>
         <input type="number" class="form-control form-control-sm dim-input" v-model="heightRef" />
       </div>  
@@ -194,6 +196,14 @@
         <el-input v-model="errorBound" placeholder="errorBound" />
     </div>
 
+    <div class="mt-2 mb-1">
+      <!-- <span style="color: #909399; font-size: 15px; margin-right: 8px;">Y-axis range:</span> -->
+      <div style="color: #909399; font-size: 15px; margin-bottom: 8px;">Y-axis range:</div>
+      <el-input v-model="min_Y" placeholder="min_Y" style="width: 80px; margin-right: 4px;"/>
+      <span style="margin: 0 4px; color: #909399;">-</span>
+      <el-input v-model="max_Y" placeholder="max_Y" style="width: 80px; margin-left: 4px;"/>
+    </div>
+
 
 
 
@@ -275,6 +285,8 @@ async function get(url) {
   //loading.close();
   return data;
 }
+// export const widthRef = ref(store.state.controlParams.finalWidth);
+// export const heightRef = 500;
 
 export default defineComponent({
   data() {
@@ -481,6 +493,7 @@ export default defineComponent({
     }
   },
 
+  
   watch: {
     isOpenDbSetup(newV, oldV) {
       if (newV) {
@@ -544,9 +557,18 @@ export default defineComponent({
     const selectedComputeOrShow = ref(store.state.controlParams.computeOrShow);
     // const multiLineClassAndLinesMap = ref(store.state.allMultiLineClassAndLinesMap);
 
-    const widthRef = ref(600);
+    // const widthRef = ref(500);
+    // const heightRef = 500;
+    // const widthRef = ref(store.state.controlParams.finalWidth);
+    // watch(widthRef, (newWidth) => {
+    //   console.log("newWidth:::", newWidth);
+    //   store.commit('updateChartWidth', newWidth);
+    // });
+
     const heightRef = ref(600);
     const errorBound = ref(0.05);
+    const min_Y = ref(0);
+    const max_Y = ref(0);
     const currentDB = computed(() => {
       return store.state.controlParams.currentDB;
     });
@@ -555,7 +577,8 @@ export default defineComponent({
       // console.log("currentMultiClassALine:",currentMultiClassALine.value);
       // console.log(Array.from(currentMultiClassLines.value));
       const payload = {
-          width: widthRef.value,
+          // width: widthRef.value,
+          width: store.state.controlParams.finalWidth,
           height: heightRef.value,
       };
       store.dispatch("Experiment", [currentMultiClass.value, Array.from(currentMultiClassLines.value), selectedOption.value, selectedExperiment.value, payload, errorBound, selectedComputeOrShow.value, selectedAggregate.value]);
@@ -565,7 +588,8 @@ export default defineComponent({
       // console.log("currentMultiClassALine:",currentMultiClassALine.value);
       // console.log(Array.from(currentMultiClassLines.value));
       const payload = {
-          width: widthRef.value,
+          // width: widthRef.value,
+          width: store.state.controlParams.finalWidth,
           height: heightRef.value,
       };
       store.dispatch("computeLineTransform", [currentMultiClass.value, Array.from(currentMultiClassLines.value), selectedOption.value,selectedExperiment.value, payload, errorBound, 'compute', selectedAggregate.value]);
@@ -576,10 +600,11 @@ export default defineComponent({
       // console.log("currentMultiClassALine:",currentMultiClassALine.value);
       // console.log(Array.from(currentMultiClassLines.value));
       const payload = {
-          width: widthRef.value,
+          // width: widthRef.value,
+          width: store.state.controlParams.finalWidth,
           height: heightRef.value,
       };
-      store.dispatch("computeLineTransform", [currentMultiClass.value, Array.from(currentMultiClassLines.value), selectedOption.value,selectedExperiment.value, payload, errorBound, 'compute', selectedAggregate.value, store.state.controlParams.startTime, store.state.controlParams.endTime]);
+      store.dispatch("computeLineTransform", [currentMultiClass.value, Array.from(currentMultiClassLines.value), selectedOption.value,selectedExperiment.value, payload, errorBound, 'compute', selectedAggregate.value, store.state.controlParams.startTime, store.state.controlParams.endTime, [min_Y, max_Y]]);
     }
 
     const allSampleAlgoritem = store.state.controlParams.sampleMethods;
@@ -749,9 +774,11 @@ export default defineComponent({
       handleSelectedAggregate,
       selectedComputeOrShow,
       handleSelectedComputeOrShow,
-      widthRef,
+      // widthRef,
       heightRef,
-      errorBound
+      errorBound,
+      min_Y,
+      max_Y
     };
   },
 });
