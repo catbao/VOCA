@@ -330,6 +330,9 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
         xScale.domain([0, multiTimeSeriesObj.width]).range([0, multiTimeSeriesObj.width]);
         // showTimeXScale.domain([new Date(realTimeStampRange[0]), new Date(realTimeStampRange[1])]).range([0, multiTimeSeriesObj.width]);
         showTimeXScale.domain([new Date(store.state.controlParams.startTimeStamp), new Date(store.state.controlParams.endTimeStamp)]).range([0, multiTimeSeriesObj.width]);
+        
+        let zoomAxis = d3.axisBottom(showTimeXScale);
+        
         if (zoomAxisG != null) {
             zoomAxisG.remove();
             zoomAxisG = svg.append("g").attr('style', 'user-select:none').attr("transform", `translate(${pading.left},${multiTimeSeriesObj.height + pading.top + 50})`).attr("class", 'x axis').call(zoomAxis)
@@ -339,7 +342,8 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
         timeBrushObj.on("start", () => {
             console.log("start")
         })
-        const tempReScale = d3.scaleLinear().domain([0, nodeIndexRange[1]]).range([0, multiTimeSeriesObj.width]);
+        // const tempReScale = d3.scaleLinear().domain([0, nodeIndexRange[1]]).range([0, multiTimeSeriesObj.width]);
+        const tempReScale = d3.scaleLinear().domain([0, multiTimeSeriesObj.dataMaxLen]).range([0, multiTimeSeriesObj.width]);
         timeBoxG.call(timeBrushObj).call(timeBrushObj.move, [tempReScale(multiTimeSeriesObj.timeRange[0]), tempReScale(multiTimeSeriesObj.timeRange[1])]);
         ctx = canvas.getContext("2d");
     }
@@ -527,9 +531,9 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
         multiTimeSeriesObj.width = width;
         updateCanvasWidth();
 
-        if (currentLevel + 1 >= multiTimeSeriesObj.maxLevel - 1) {
-            return
-        }
+        // if (currentLevel + 1 >= multiTimeSeriesObj.maxLevel - 1) {
+        //     return
+        // }
 
         //@ts-ignore
         canvas.style.width = multiTimeSeriesObj.width

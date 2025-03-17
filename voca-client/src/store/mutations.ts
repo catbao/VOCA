@@ -402,6 +402,11 @@ function alterSelectedOption(state: GlobalState, option: string){
     state.controlParams.transform_symbol = option;
 }
 
+function alterWidth(state: GlobalState){
+    const widthInput = document.getElementById("displayWidth") as HTMLInputElement;
+    store.state.controlParams.finalWidth = Number(widthInput.value);
+}
+
 function alterSelectedExperiment(state: GlobalState, option: string){
     state.controlParams.experiment = option;
 }
@@ -498,6 +503,7 @@ export {
     alterStopEarly,
     alterNoStopEarly,
     
-    updateChartWidth
+    updateChartWidth,
+    alterWidth
 }
 

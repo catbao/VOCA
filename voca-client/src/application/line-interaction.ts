@@ -157,7 +157,7 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
             console.log("start, new width:", lineChartObj.width)
         })
         console.log("start, timerange:", lineChartObj.timeRange[0], lineChartObj.timeRange[1])
-        const tempReScale=d3.scaleLinear().domain([0, lineChartObj.maxLen - 1]).range([0,lineChartObj.width]);
+        const tempReScale=d3.scaleLinear().domain([0, lineChartObj.dataMaxLen - 1]).range([0,lineChartObj.width]);
 
         let startTimeBoxG = lineChartObj.timeRange[0] / lineChartObj.dataMaxLen * lineChartObj.width;
         let endTimeBoxG = lineChartObj.timeRange[1] / lineChartObj.dataMaxLen * lineChartObj.width;
@@ -300,11 +300,7 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
         xReScale = d3.scaleLinear().domain([0, lineChartObj.width]).range([0, lineChartObj.dataMaxLen - 1]);
         const timeRange = [Math.floor(xReScale(selection[0])), Math.floor(xReScale(selection[1]))];
         console.log("brush timerange,width:", lineChartObj.timeRange[0], lineChartObj.timeRange[1], lineChartObj.width);
-        // heightRef.value = lineChartObj.height;
-        // widthRef.value = lineChartObj.width;
-        // nextTick(() => {
-        //     console.log('组件已重新渲染');
-        //   });
+        
 
         if (timeRange[0] < 0) {
             timeRange[0] = 0;

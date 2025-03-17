@@ -5,7 +5,7 @@
     <div class="d-flex ms-2" marginTop="10px">
         <!-- <KeepAlive> -->
         <!-- <input type="number" class="form-control form-control-sm dim-input" id="displayWidth" v-model="widthRef" /> -->
-        <input type="number" class="form-control form-control-sm dim-input" id="displayWidth" value="600" /> 
+        <input type="number" class="form-control form-control-sm dim-input" id="displayWidth" value="600" @change="handleWidthChange"/> 
         <!-- </KeepAlive> -->
         <span style="line-height: 31px">×</span>
         <input type="number" class="form-control form-control-sm dim-input" v-model="heightRef" />
@@ -565,6 +565,7 @@ export default defineComponent({
     //   store.commit('updateChartWidth', newWidth);
     // });
 
+    // const fakeWidth = ref(600);
     const heightRef = ref(600);
     const errorBound = ref(0.05);
     const min_Y = ref(0);
@@ -643,6 +644,11 @@ export default defineComponent({
     const handleSelectedOption = () => {
       console.log("Current Symbol:", selectedOption.value);
       store.commit("alterSelectedOption", selectedOption.value);
+    }
+
+    const handleWidthChange = () => {
+      store.commit("alterWidth");
+      // store.state.controlParams.finalWidth = fakeWidth.value;
     }
 
     const handleSelectedExperiment = () => {
@@ -778,7 +784,8 @@ export default defineComponent({
       heightRef,
       errorBound,
       min_Y,
-      max_Y
+      max_Y,
+      handleWidthChange
     };
   },
 });
