@@ -601,7 +601,7 @@ export default defineComponent({
       // console.log("currentMultiClassALine:",currentMultiClassALine.value);
       // console.log(Array.from(currentMultiClassLines.value));
       if (Array.from(currentMultiClassLines.value).length === 1 && (selectedOption.value === '+' || selectedOption.value === '-' || selectedOption.value === '*' || selectedOption.value === '/' || selectedOption.value === 'func4')) {
-        alert('A single data line cannot perform binary operation.');
+        alert('A binary operator requires cannot be applied to a single time series.');
         return;
       }
       
