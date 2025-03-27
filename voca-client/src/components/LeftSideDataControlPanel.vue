@@ -600,6 +600,11 @@ export default defineComponent({
     const handleComputePanel = () => {
       // console.log("currentMultiClassALine:",currentMultiClassALine.value);
       // console.log(Array.from(currentMultiClassLines.value));
+      if (Array.from(currentMultiClassLines.value).length === 1 && (selectedOption.value === '+' || selectedOption.value === '-' || selectedOption.value === '*' || selectedOption.value === '/')) {
+        alert('A single data line cannot perform binary operation.');
+        return;
+      }
+      
       const payload = {
           // width: widthRef.value,
           width: store.state.controlParams.finalWidth,
