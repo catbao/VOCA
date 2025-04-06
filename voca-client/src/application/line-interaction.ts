@@ -198,32 +198,20 @@ export function drawViewChangeLineChart(lineChartObj: ViewChangeLineChartObj, li
             yScale = d3.scaleLinear().domain([lineChartObj.minV, lineChartObj.maxV]).range([lineChartObj.height, 0]);
             // yScale = d3.scaleLinear().domain([-20, 20]).range([lineChartObj.height, 0]);
         }
-        // if(store.state.controlParams.aggregate == ''){
-        //     yScale = d3.scaleLinear().domain([-60, 60]).range([lineChartObj.height, 0]);
-        // }
-        // else if(store.state.controlParams.aggregate == 'hours'){
-        //     yScale = d3.scaleLinear().domain([-1400, 1800]).range([lineChartObj.height, 0]);
-        // }
-        // else if(store.state.controlParams.aggregate == 'day'){
-        //     yScale = d3.scaleLinear().domain([-4000, 20000]).range([lineChartObj.height, 0]);
-        // }
-        // else if(store.state.controlParams.aggregate == 'week'){
-        //     yScale = d3.scaleLinear().domain([0, 100000]).range([lineChartObj.height, 0]);
-        // }
-        // else if(store.state.controlParams.aggregate == 'month'){
-        //     yScale = d3.scaleLinear().domain([0, 400000]).range([lineChartObj.height, 0]);
-        // }
-        // else if(store.state.controlParams.aggregate == 'year'){
-        //     yScale = d3.scaleLinear().domain([0, 5000000]).range([lineChartObj.height, 0]);
-        // }
         // yScale = d3.scaleLinear().domain([-finalValue, finalValue]).range([lineChartObj.height, 0]);
         
         // yAxis = d3.axisLeft(yScale)
+        const domain = yScale.domain();
+        const rangeDiff = Math.abs(domain[1] - domain[0]);
         let yAxis = d3.axisLeft<number>(yScale) // 关键修改：添加 <number> 泛型类型
         .tickFormat((d) => {
             // 添加类型断言，明确 d 是 number 类型
             const value = d as number;
             
+            if (rangeDiff < 10) {
+                return d3.format(".3f")(value);
+            }
+
             // 将数值转换为通用格式的字符串
             const formatted = d3.format("g")(value);
             // 检查字符串长度是否超过10位

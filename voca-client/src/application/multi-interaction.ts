@@ -413,13 +413,28 @@ export function drawMultiTimeSeries(multiTimeSeriesObj: MultiTimeSeriesObj, line
             yScale = d3.scaleLinear().domain([multiTimeSeriesObj.minv, multiTimeSeriesObj.maxv]).range([multiTimeSeriesObj.height, 0]);  
         }
         // yScale = d3.scaleLinear().domain([multiTimeSeriesObj.minv, multiTimeSeriesObj.maxv]).range([multiTimeSeriesObj.height, 0]);  
-        yAxis = d3.axisLeft(yScale);
-        // if (store.state.controlParams.currentMode === 'Default') {
-        //     yAxis = d3.axisLeft(yScale).tickFormat((val) => {
-        //         //@ts-ignore
-        //         return 100 * val + "%"
-        //     })
-        // }
+        const domain = yScale.domain();
+        const rangeDiff = Math.abs(domain[1] - domain[0]);
+        // yAxis = d3.axisLeft(yScale);
+        let yAxis = d3.axisLeft<number>(yScale) // 关键修改：添加 <number> 泛型类型
+        .tickFormat((d) => {
+            // 添加类型断言，明确 d 是 number 类型
+            const value = d as number;
+            
+            if (rangeDiff < 10) {
+                return d3.format(".3f")(value);
+            }
+
+            // 将数值转换为通用格式的字符串
+            const formatted = d3.format("g")(value);
+            // 检查字符串长度是否超过10位
+            if (formatted.length > 9) {
+            // 使用科学记数法，保留两位有效数字
+            return d3.format(".2e")(value);
+            } else {
+            return d3.format("d")(value);
+            }
+        });
         if (yAxisG !== null && yAxisG !== undefined) {
             yAxisG.remove();
         }
