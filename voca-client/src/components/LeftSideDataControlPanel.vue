@@ -171,13 +171,13 @@
       </el-select>
     </div>
 
-    <div class="compute-line-container mt-2 ms-1">
+    <!-- <div class="compute-line-container mt-2 ms-1">
       <span style="margin-left: 4px; color: #909399; font-size: 15px;">Aggregate level:</span>
       <el-select v-model="selectedAggregate" placeholder="Aggregate" @change="handleSelectedAggregate" @focus="onFocusAggregate">
         <el-option v-for="(item, idx) in multiLineClassAndLinesMap.get('aggregates')" :key="idx" :label="item" :value="item">
         </el-option>
       </el-select>
-    </div>
+    </div> -->
 
 
     <div class="mt-2 mb-1">
